@@ -1,0 +1,51 @@
+-- Q1. Total Sales
+Total Sales =
+SUM(Orders[Sales])
+
+
+-- Q2. Total Sales for 2025
+Sales 2025 =
+CALCULATE(
+    [Total Sales],
+    YEAR(Orders[OrderDate]) = 2025
+)
+
+
+-- Q3. Repeat Customers
+Repeat Customers =
+COUNTROWS(
+    FILTER(
+        VALUES(Orders[CustomerID]),
+        CALCULATE(
+            COUNTROWS(Orders)
+        ) > 1
+    )
+)
+
+
+-- Q4. Top 5 Products by Sales
+Product Sales Rank =
+RANKX(
+    ALL(Orders[ProductID]),
+    [Total Sales],
+    ,
+    DESC,
+    DENSE
+)
+
+
+-- Q5. Sales Above Average
+Sales Above Average =
+VAR AverageProductSales =
+    AVERAGEX(
+        VALUES(Orders[ProductID]),
+        [Total Sales]
+    )
+RETURN
+    SUMX(
+        FILTER(
+            VALUES(Orders[ProductID]),
+            [Total Sales] > AverageProductSales
+        ),
+        [Total Sales]
+    )
